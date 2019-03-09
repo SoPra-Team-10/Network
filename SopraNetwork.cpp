@@ -1,4 +1,4 @@
-#include "sopra_network.h"
+#include "SopraNetwork.h"
 
 #include <iostream>
 

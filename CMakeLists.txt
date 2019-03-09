@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(NetworkSoPra VERSION 0.0.1 DESCRIPTION "Network for SoPra")
+project(SopraNetwork VERSION 0.0.1 DESCRIPTION "Network for SoPra")
 
 # Build options
 set(CMAKE_CXX_STANDARD 17)
@@ -14,13 +14,13 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 # Building
-set(SOURCES ${CMAKE_SOURCE_DIR}/sopra_network.cpp)
+set(SOURCES ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
 # Installation via make install
 include(GNUInstallDirs)
-set(PUBLIC_HEADER sopra_network.h)
+set(PUBLIC_HEADER SopraNetwork.h)
 set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
