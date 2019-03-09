@@ -1,0 +1,8 @@
+services:
+  - docker
+
+before_install:
+  - docker build -t network .
+
+script:
+  - docker run network
