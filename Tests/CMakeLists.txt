@@ -11,7 +11,7 @@ if (GTest_FOUND)
 
     add_executable(${PROJECT_NAME} main.cpp ${SOURCES} ${TEST_SOURCES})
 
-    target_link_libraries(${PROJECT_NAME} gmock gtest pthread)
+    target_link_libraries(${PROJECT_NAME} ${LIBS} gmock gtest pthread)
 
     add_test(
             NAME ${PROJECT_NAME}

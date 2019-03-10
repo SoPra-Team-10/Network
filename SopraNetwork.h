@@ -1,5 +1,5 @@
-#ifndef NETWORK_LIBRARY_H
-#define NETWORK_LIBRARY_H
+#ifndef SOPRA_NETWORK_LIB_H
+#define SOPRA_NETWORK_LIB_H
 
 void hello();
 

@@ -15,8 +15,10 @@ endif ()
 
 # Building
 set(SOURCES ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp)
+set(LIBS websockets)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
+target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 # Installation via make install
 include(GNUInstallDirs)
