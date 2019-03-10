@@ -14,7 +14,10 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 # Building
-set(SOURCES ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp)
+set(SOURCES
+        ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp
+        ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp)
+
 set(LIBS websockets)
 
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
