@@ -31,7 +31,7 @@ namespace network {
         std::list<std::function<void()>> toCall;
         std::mutex toCallLock;
 
-        std::unique_ptr<lws_context> context;
+        std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
 
         static int callBackHttp(lws *, lws_callback_reasons, void *, void *, std::size_t);
         static int callBackOther(lws *, lws_callback_reasons, void *, void *, std::size_t);

@@ -24,14 +24,16 @@ namespace network {
         }
     };
 
-    WebSocketServer::WebSocketServer(uint16_t port) {
+    WebSocketServer::WebSocketServer(uint16_t port) :
+        context{nullptr, lws_context_destroy} {
         lws_context_creation_info contextCreationInfo{};
         contextCreationInfo.port = port;
         contextCreationInfo.protocols = WebSocketServer::protocols;
         contextCreationInfo.gid = -1;
         contextCreationInfo.uid = -1;
 
-        this->context = std::unique_ptr<lws_context>{lws_create_context(&contextCreationInfo)};
+        this->context = decltype(this->context){lws_create_context(&contextCreationInfo),
+                                                     lws_context_destroy};
 
         if (!this->context) {
             throw std::runtime_error("Could not initialize websocket");
