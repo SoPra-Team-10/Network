@@ -16,7 +16,8 @@ endif ()
 # Building
 set(SOURCES
         ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp
-        ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp)
+        ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp
+        ${CMAKE_SOURCE_DIR}/Server/Connection.cpp)
 
 set(LIBS websockets)
 
