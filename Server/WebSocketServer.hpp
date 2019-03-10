@@ -14,22 +14,29 @@
 #include <libwebsockets.h>
 #include "../Util/Listener.hpp"
 
-class WebSocketServer {
-public:
-    explicit WebSocketServer(uint16_t port);
-    void send(std::string text);
-    const util::Listener<std::string> receiveListener;
+namespace network {
+    class WebSocketServer {
+    public:
+        explicit WebSocketServer(uint16_t port);
 
-private:
-    void sendImpl(std::string text);
-    static int callBackHttp(lws_context*, lws*, lws_callback_reasons, void*,void*,std::size_t);
+        void send(const std::string &text);
 
-    std::thread workerThread;
-    std::list<std::function<void()>> toCall;
-    std::mutex toCallLock;
+        const util::Listener<std::string> receiveListener;
 
+    private:
+        void sendImpl(const std::string &text);
+        void run();
 
-};
+        std::thread workerThread;
+        std::list<std::function<void()>> toCall;
+        std::mutex toCallLock;
 
+        std::unique_ptr<lws_context> context;
+
+        static int callBackHttp(lws *, lws_callback_reasons, void *, void *, std::size_t);
+        static int callBackOther(lws *, lws_callback_reasons, void *, void *, std::size_t);
+        static lws_protocols protocols[];
+    };
+}
 
 #endif //SOPRANETWORK_WEBSOCKETSERVER_HPP
