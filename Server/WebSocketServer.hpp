@@ -30,11 +30,12 @@ namespace network {
         void run();
 
         std::thread workerThread;
+        std::atomic_bool finished;
         std::list<std::function<void()>> toCall;
         std::mutex toCallLock;
-        std::atomic_bool finished;
 
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
+        const std::vector<lws_protocols> protocols;
 
         static int handler(lws *websocket, lws_callback_reasons reasons, void * userData, void *data,
                 std::size_t len);
