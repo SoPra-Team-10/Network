@@ -25,4 +25,4 @@ if (GTest_FOUND)
 endif()
 
 add_executable(ServerTest serverTest.cpp ${SOURCES})
-target_link_libraries(ServerTest ${LIBS})
+target_link_libraries(ServerTest ${LIBS} pthread)
