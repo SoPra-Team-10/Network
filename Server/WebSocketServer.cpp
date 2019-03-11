@@ -21,9 +21,6 @@ namespace network {
                 0,
                 nullptr,
                 0
-            },
-            {
-                nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
             }
         };
 
@@ -45,7 +42,6 @@ namespace network {
     }
 
     void WebSocketServer::run() {
-        finishedComplete.lock();
         while (!finished) {
             lws_service(this->context.get(), 50);
 
@@ -56,7 +52,6 @@ namespace network {
             this->toCall.clear();
             this->toCallLock.unlock();
         }
-        finishedComplete.unlock();
     }
 
     void WebSocketServer::sendImpl(const std::string &text) {
@@ -65,8 +60,7 @@ namespace network {
 
     WebSocketServer::~WebSocketServer() {
         finished = true;
-        finishedComplete.lock();
-        finishedComplete.unlock();
+        workerThread.join();
     }
 
     int

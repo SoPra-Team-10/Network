@@ -33,7 +33,6 @@ namespace network {
         std::list<std::function<void()>> toCall;
         std::mutex toCallLock;
         std::atomic_bool finished;
-        std::mutex finishedComplete;
 
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
 
