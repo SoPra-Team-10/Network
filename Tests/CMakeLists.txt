@@ -23,3 +23,6 @@ if (GTest_FOUND)
             COMMAND ${PROJECT_NAME}
     )
 endif()
+
+add_executable(ServerTest serverTest.cpp ${SOURCES})
+target_link_libraries(ServerTest ${LIBS})

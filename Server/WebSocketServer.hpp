@@ -26,7 +26,7 @@ namespace network {
 
         ~WebSocketServer();
     private:
-        void sendImpl(const std::string &text);
+        void sendImpl(std::string text, const std::unique_ptr<lws> wsi);
         void run();
 
         std::thread workerThread;

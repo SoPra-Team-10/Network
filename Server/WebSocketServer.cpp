@@ -55,8 +55,8 @@ namespace network {
         }
     }
 
-    void WebSocketServer::sendImpl(const std::string &text) {
-
+    void WebSocketServer::sendImpl(std::string text, const std::unique_ptr<lws> wsi) {
+        lws_write(wsi.get(), reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
     }
 
     WebSocketServer::~WebSocketServer() {
@@ -64,33 +64,39 @@ namespace network {
         workerThread.join();
     }
 
-    int
-    WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data, size_t len) {
+    int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data, size_t len) {
         auto *connection = static_cast<Connection*>(userData);
+        std::string text{static_cast<char *>(data), len};
 
         switch (reasons) {
-            case LWS_CALLBACK_PROTOCOL_INIT:
+            case LWS_CALLBACK_PROTOCOL_INIT: {
 
                 break;
-            case LWS_CALLBACK_PROTOCOL_DESTROY:
+            }
+            case LWS_CALLBACK_PROTOCOL_DESTROY: {
 
                 break;
-            case LWS_CALLBACK_ESTABLISHED:
+            }
+            case LWS_CALLBACK_ESTABLISHED: {
 
                 break;
-            case LWS_CALLBACK_CLOSED:
+            }
+            case LWS_CALLBACK_CLOSED: {
 
                 break;
-            case LWS_CALLBACK_SERVER_WRITEABLE:
+            }
+            case LWS_CALLBACK_SERVER_WRITEABLE: {
 
                 break;
-            case LWS_CALLBACK_RECEIVE:
-
+            }
+            case LWS_CALLBACK_RECEIVE: {
                 break;
+            }
             default:
                 return 0;
         }
 
         return 0;
     }
+
 }
