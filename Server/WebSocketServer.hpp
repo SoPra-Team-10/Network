@@ -20,19 +20,21 @@
 namespace network {
     class WebSocketServer {
     public:
+        using AsyncCallList = std::pair<std::shared_ptr<std::list<std::function<void()>>>,
+                std::shared_ptr<std::mutex>>;
+
         explicit WebSocketServer(uint16_t port);
 
         const util::Listener<Connection> connectionListener;
 
         ~WebSocketServer();
     private:
-        void sendImpl(std::string text, const std::unique_ptr<lws> wsi);
+        void sendImpl(std::string text, const std::unique_ptr<lws> &wsi);
         void run();
 
         std::thread workerThread;
         std::atomic_bool finished;
-        std::list<std::function<void()>> toCall;
-        std::mutex toCallLock;
+        AsyncCallList callList;
 
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
         const std::vector<lws_protocols> protocols;

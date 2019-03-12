@@ -10,7 +10,8 @@
 namespace network {
     WebSocketServer::WebSocketServer(uint16_t port) :
         finished{false},
-        context{nullptr, lws_context_destroy} ,
+        callList{std::make_shared<std::list<std::function<void()>>>(),std::make_shared<std::mutex>()},
+        context{nullptr, lws_context_destroy},
         protocols{
             {
                 "http-only",
@@ -46,16 +47,16 @@ namespace network {
         while (!finished) {
             lws_service(this->context.get(), 50);
 
-            this->toCallLock.lock();
-            for (const auto &call : toCall) {
+            this->callList.second->lock();
+            for (const auto &call : *this->callList.first) {
                 call();
             }
-            this->toCall.clear();
-            this->toCallLock.unlock();
+            this->callList.first->clear();
+            this->callList.second->unlock();
         }
     }
 
-    void WebSocketServer::sendImpl(std::string text, const std::unique_ptr<lws> wsi) {
+    void WebSocketServer::sendImpl(std::string text, const std::unique_ptr<lws> &wsi) {
         lws_write(wsi.get(), reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
     }
 
