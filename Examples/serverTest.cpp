@@ -6,7 +6,10 @@
  */
 #include <iostream>
 
-#include <SopraNetwork.h>
+#include "../Server/WebSocketServer.hpp"
+
+// Or use the installed version:
+//#include <SopraNetwork/WebSocketServer.hpp>
 
 int main() {
     network::WebSocketServer server{8080};

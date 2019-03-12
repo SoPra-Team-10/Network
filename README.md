@@ -10,7 +10,7 @@ sudo make install
 the library can now be included using
 
 ```
-#include <SopraNetwork.h>
+#include <SopraNetwork/XY>
 ```
 
 and linked using

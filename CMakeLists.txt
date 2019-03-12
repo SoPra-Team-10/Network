@@ -26,14 +26,13 @@ target_link_libraries(${PROJECT_NAME} ${LIBS})
 
 # Installation via make install
 include(GNUInstallDirs)
-set(PUBLIC_HEADER SopraNetwork.h)
 set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
-        PUBLIC_HEADER ${PUBLIC_HEADER})
+        PUBLIC_HEADER "Server/WebSocketServer.hpp;Server/Connection.hpp")
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SopraNetwork)
 
 
 add_subdirectory(Tests)

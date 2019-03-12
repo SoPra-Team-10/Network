@@ -10,6 +10,7 @@ if (GTest_FOUND)
             Server/Connection.cpp)
 
     if (USE_INSTALLED_LIB)
+        add_definitions(-DUSE_INSTALLED_LIB)
         add_executable(${PROJECT_NAME} main.cpp ${TEST_SOURCES})
         target_link_libraries(${PROJECT_NAME} gmock gtest pthread ${CMAKE_PROJECT_NAME})
     else()

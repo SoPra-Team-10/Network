@@ -1,6 +1,10 @@
 #include <gtest/gtest.h>
 
-#include <SopraNetwork.h>
+#ifdef USE_INSTALLED_LIB
+#include <WebSocketServer.hpp>
+#else
+#include <Server/WebSocketServer.hpp>
+#endif
 
 TEST(WebSocketServer, ConstructDeconstruct) {
     network::WebSocketServer server{8080};
