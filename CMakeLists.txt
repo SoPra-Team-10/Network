@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.10)
-project(SopraNetwork VERSION 0.0.1 DESCRIPTION "Network for SoPra")
 
 # Build options
 set(CMAKE_CXX_STANDARD 17)
@@ -14,6 +13,8 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif ()
 
 # Building
+project(SopraNetwork VERSION 0.0.1 DESCRIPTION "Network for SoPra")
+
 set(SOURCES
         ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp
         ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp
