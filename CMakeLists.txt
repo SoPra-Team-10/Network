@@ -30,7 +30,7 @@ include(GNUInstallDirs)
 set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
-        PUBLIC_HEADER "Server/WebSocketServer.hpp;Server/Connection.hpp")
+        PUBLIC_HEADER "Server/WebSocketServer.hpp;Server/Connection.hpp;Server/Listener.hpp")
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SopraNetwork)

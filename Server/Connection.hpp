@@ -8,7 +8,7 @@
 #ifndef SOPRANETWORK_CONNECTIONINFORMATION_HPP
 #define SOPRANETWORK_CONNECTIONINFORMATION_HPP
 
-#include "../Util/Listener.hpp"
+#include "Listener.hpp"
 
 namespace network {
     class Connection {
