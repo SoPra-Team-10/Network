@@ -5,18 +5,23 @@
  * @brief WebSocketServer @TODO
  */
 
+#include <iostream>
 #include "WebSocketServer.hpp"
 
 namespace network {
+    AsyncCallList WebSocketServer::callList{std::make_shared<std::pair<std::list<std::function<void()>>,std::mutex>>()};
+    int WebSocketServer::connectionUidCount{0};
+    const util::Listener<std::shared_ptr<Connection>> WebSocketServer::connectionListener;
+    std::map<int, std::shared_ptr<Connection>> WebSocketServer::connections;
+
     WebSocketServer::WebSocketServer(uint16_t port) :
         finished{false},
-        callList{std::make_shared<std::list<std::function<void()>>>(),std::make_shared<std::mutex>()},
         context{nullptr, lws_context_destroy},
         protocols{
             {
                 "http-only",
                 &WebSocketServer::handler,
-                sizeof(Connection),
+                sizeof(int),
                 4096,
                 0,
                 nullptr,
@@ -47,17 +52,17 @@ namespace network {
         while (!finished) {
             lws_service(this->context.get(), 50);
 
-            this->callList.second->lock();
-            for (const auto &call : *this->callList.first) {
+            network::WebSocketServer::callList->second.lock();
+            for (const auto &call : network::WebSocketServer::callList->first) {
                 call();
             }
-            this->callList.first->clear();
-            this->callList.second->unlock();
+            network::WebSocketServer::callList->first.clear();
+            network::WebSocketServer::callList->second.unlock();
         }
     }
 
-    void WebSocketServer::sendImpl(std::string text, const std::unique_ptr<lws> &wsi) {
-        lws_write(wsi.get(), reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
+    void WebSocketServer::sendImpl(std::string text, lws *wsi) {
+        lws_write(wsi, reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
     }
 
     WebSocketServer::~WebSocketServer() {
@@ -66,35 +71,33 @@ namespace network {
     }
 
     int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data, size_t len) {
-        auto *connection = static_cast<Connection*>(userData);
+        auto *id = static_cast<int*>(userData);
         std::string text{static_cast<char *>(data), len};
 
         switch (reasons) {
-            case LWS_CALLBACK_PROTOCOL_INIT: {
-
-                break;
-            }
-            case LWS_CALLBACK_PROTOCOL_DESTROY: {
-
-                break;
-            }
             case LWS_CALLBACK_ESTABLISHED: {
-
+                *id = ++connectionUidCount;
+                auto connection = std::make_shared<Connection>(websocket, WebSocketServer::callList);
+                connections.emplace(std::make_pair(*id, connection));
+                WebSocketServer::connectionListener(connection);
+                std::cout << "Established (" << *id << ")" << std::endl;
                 break;
             }
             case LWS_CALLBACK_CLOSED: {
-
-                break;
-            }
-            case LWS_CALLBACK_SERVER_WRITEABLE: {
-
+                std::cout << "Closed (" << *id << ")" << std::endl;
+                connections.erase(*id);
                 break;
             }
             case LWS_CALLBACK_RECEIVE: {
+                std::cout << "Recv (" << *id << "): " << text << std::endl;
+                auto it = connections.find(*id);
+                if (it != connections.end()) {
+                    it->second->receiveListener(text);
+                }
                 break;
             }
             default:
-                return 0;
+                break;
         }
 
         return 0;

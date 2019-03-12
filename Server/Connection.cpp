@@ -1,3 +1,5 @@
+#include <utility>
+
 /**
  * @file ConnectionInformation.cpp
  * @author paul
@@ -6,8 +8,14 @@
  */
 
 #include "Connection.hpp"
+#include "WebSocketServer.hpp"
 
 namespace network {
-    void network::Connection::send(const std::string &text) {
+    Connection::Connection(lws *socket, AsyncCallList asyncCallList)
+            : socket{socket}, callList{std::move(asyncCallList)}{}
+
+    void Connection::send(std::string text) {
+        std::lock_guard<std::mutex> lockGuard{callList->second};
+        callList->first.emplace_back([=](){WebSocketServer::sendImpl(text, this->socket);});
     }
 }

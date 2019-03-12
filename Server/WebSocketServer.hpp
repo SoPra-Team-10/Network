@@ -12,36 +12,39 @@
 #include <thread>
 #include <mutex>
 #include <atomic>
+#include <map>
 
 #include <libwebsockets.h>
 
+#include "Listener.hpp"
 #include "Connection.hpp"
 
 namespace network {
     class WebSocketServer {
+        friend class Connection;
     public:
-        using AsyncCallList = std::pair<std::shared_ptr<std::list<std::function<void()>>>,
-                std::shared_ptr<std::mutex>>;
-
         explicit WebSocketServer(uint16_t port);
 
-        const util::Listener<Connection> connectionListener;
+        static const util::Listener<std::shared_ptr<Connection>> connectionListener;
 
         ~WebSocketServer();
     private:
-        void sendImpl(std::string text, const std::unique_ptr<lws> &wsi);
         void run();
 
         std::thread workerThread;
         std::atomic_bool finished;
-        AsyncCallList callList;
 
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
         const std::vector<lws_protocols> protocols;
 
+        static void sendImpl(std::string text, lws *wsi);
         static int handler(lws *websocket, lws_callback_reasons reasons, void * userData, void *data,
                 std::size_t len);
+        static int connectionUidCount;
+        static AsyncCallList callList;
+        static std::map<int, std::shared_ptr<Connection>> connections;
     };
+
 }
 
 #endif //SOPRANETWORK_WEBSOCKETSERVER_HPP

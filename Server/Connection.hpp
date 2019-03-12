@@ -9,19 +9,24 @@
 #define SOPRANETWORK_CONNECTIONINFORMATION_HPP
 
 #include <memory>
+#include <mutex>
 
 #include <libwebsockets.h>
 
 #include "Listener.hpp"
 
 namespace network {
-    class Connection {
-        public:
-            void send(const std::string &text);
+    using AsyncCallList = std::shared_ptr<std::pair<std::list<std::function<void()>>, std::mutex>>;
 
+    class Connection {
+        friend class WebSocketServer;
+        public:
+            Connection(lws* socket, AsyncCallList asyncCallList);
             const util::Listener<std::string> receiveListener;
+            void send(std::string text);
         private:
-            std::unique_ptr<lws> websocket;
+            lws* socket;
+            AsyncCallList callList;
     };
 }
 
