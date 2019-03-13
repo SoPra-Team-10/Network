@@ -9,10 +9,7 @@
 #include "WebSocketServer.hpp"
 
 namespace network {
-    AsyncCallList WebSocketServer::callList{std::make_shared<std::pair<std::list<std::function<void()>>,std::mutex>>()};
-    int WebSocketServer::connectionUidCount{0};
-    const util::Listener<std::shared_ptr<Connection>> WebSocketServer::connectionListener;
-    std::map<int, std::shared_ptr<Connection>> WebSocketServer::connections;
+    std::map<lws_context*, WebSocketServer*> WebSocketServer::instances;
 
     WebSocketServer::WebSocketServer(uint16_t port) :
         finished{false},
@@ -20,7 +17,7 @@ namespace network {
         protocols{
             {
                 "http-only",
-                &WebSocketServer::handler,
+                &WebSocketServer::globalHandler,
                 sizeof(int),
                 4096,
                 0,
@@ -30,7 +27,9 @@ namespace network {
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
             }
-        } {
+        },
+        callList{std::make_shared<std::pair<std::list<std::function<void()>>,std::mutex>>()},
+        connectionUidCount{0} {
 
         lws_context_creation_info contextCreationInfo{};
         contextCreationInfo.port = port;
@@ -44,6 +43,7 @@ namespace network {
         if (!this->context) {
             throw std::runtime_error("Could not initialize websocket");
         }
+        instances.insert({this->context.get(), this});
 
         this->workerThread = std::thread{&WebSocketServer::run, this};
     }
@@ -52,12 +52,12 @@ namespace network {
         while (!finished) {
             lws_service(this->context.get(), 50);
 
-            network::WebSocketServer::callList->second.lock();
-            for (const auto &call : network::WebSocketServer::callList->first) {
+            this->callList->second.lock();
+            for (const auto &call : this->callList->first) {
                 call();
             }
-            network::WebSocketServer::callList->first.clear();
-            network::WebSocketServer::callList->second.unlock();
+            this->callList->first.clear();
+            this->callList->second.unlock();
         }
     }
 
@@ -70,27 +70,24 @@ namespace network {
         workerThread.join();
     }
 
-    int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data, size_t len) {
-        auto *id = static_cast<int*>(userData);
-        std::string text{static_cast<char *>(data), len};
-
+    int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, int *userData, std::string text) {
         switch (reasons) {
             case LWS_CALLBACK_ESTABLISHED: {
-                *id = ++connectionUidCount;
-                auto connection = std::make_shared<Connection>(websocket, WebSocketServer::callList);
-                connections.emplace(std::make_pair(*id, connection));
-                WebSocketServer::connectionListener(connection);
-                std::cout << "Established (" << *id << ")" << std::endl;
+                *userData = ++connectionUidCount;
+                auto connection = std::make_shared<Connection>(websocket, this->callList);
+                connections.emplace(std::make_pair(*userData, connection));
+                this->connectionListener(connection);
+                std::cout << "Established (" << *userData << ")" << std::endl;
                 break;
             }
             case LWS_CALLBACK_CLOSED: {
-                std::cout << "Closed (" << *id << ")" << std::endl;
-                connections.erase(*id);
+                std::cout << "Closed (" << *userData << ")" << std::endl;
+                connections.erase(*userData);
                 break;
             }
             case LWS_CALLBACK_RECEIVE: {
-                std::cout << "Recv (" << *id << "): " << text << std::endl;
-                auto it = connections.find(*id);
+                std::cout << "Recv (" << *userData << "): " << text << std::endl;
+                auto it = connections.find(*userData);
                 if (it != connections.end()) {
                     it->second->receiveListener(text);
                 }
@@ -103,4 +100,15 @@ namespace network {
         return 0;
     }
 
+    int WebSocketServer::globalHandler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data,
+                                       size_t len) {
+        auto *id = static_cast<int*>(userData);
+        std::string text{static_cast<char *>(data), len};
+        auto *ctx = lws_get_context(websocket);
+        auto instance = instances.find(ctx);
+        if (instance != instances.end()) {
+            return instance->second->handler(websocket, reasons, id, text);
+        }
+        return 0;
+    }
 }

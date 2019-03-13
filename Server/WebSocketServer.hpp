@@ -25,11 +25,12 @@ namespace network {
     public:
         explicit WebSocketServer(uint16_t port);
 
-        static const util::Listener<std::shared_ptr<Connection>> connectionListener;
+        const util::Listener<std::shared_ptr<Connection>> connectionListener;
 
         ~WebSocketServer();
     private:
         void run();
+        int handler(lws *websocket, lws_callback_reasons reasons, int *id, std::string text);
 
         std::thread workerThread;
         std::atomic_bool finished;
@@ -37,12 +38,14 @@ namespace network {
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
         const std::vector<lws_protocols> protocols;
 
+        AsyncCallList callList;
+        int connectionUidCount;
+        std::map<int, std::shared_ptr<Connection>> connections;
+
+        static int globalHandler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data,
+                                 std::size_t len);
+        static std::map<lws_context*, WebSocketServer*> instances;
         static void sendImpl(std::string text, lws *wsi);
-        static int handler(lws *websocket, lws_callback_reasons reasons, void * userData, void *data,
-                std::size_t len);
-        static int connectionUidCount;
-        static AsyncCallList callList;
-        static std::map<int, std::shared_ptr<Connection>> connections;
     };
 
 }

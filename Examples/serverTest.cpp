@@ -18,8 +18,8 @@ void newConnectionHandler(std::shared_ptr<network::Connection> connection) {
 
 int main() {
     network::WebSocketServer server{8080};
-    decltype(network::WebSocketServer::connectionListener)::type handler{newConnectionHandler};
-    network::WebSocketServer::connectionListener(handler);
+    decltype(server.connectionListener)::type handler{newConnectionHandler};
+    server.connectionListener(handler);
     std::cout << "Started on port 8080" << std::endl;
     while (true) {
 
