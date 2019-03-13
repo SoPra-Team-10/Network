@@ -19,13 +19,29 @@
 #include "Connection.hpp"
 
 namespace network {
+    /**
+     * The WebSocketServer is the main class for handling of connnections, it manages the events
+     * and generates an event for every new connection.
+     */
     class WebSocketServer {
         friend class Connection;
     public:
+        /**
+         * CTor: Create a new server.
+         * @param port the port to use, often this is port 80 (HTTP)
+         * @param protocolName the name of the protocol to use (needs to be the same as in the client code)
+         */
         WebSocketServer(uint16_t port, const std::string &protocolName);
 
+        /**
+         * This listener is triggered everytime a new connection exists. The handlers are
+         * called in the server thread, not in the main thread!
+         */
         const util::Listener<std::shared_ptr<Connection>> connectionListener;
 
+        /**
+         * DTor
+         */
         ~WebSocketServer();
     private:
         void run();
