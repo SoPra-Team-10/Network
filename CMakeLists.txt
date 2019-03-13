@@ -16,12 +16,12 @@ endif ()
 project(SopraNetwork VERSION 0.0.1 DESCRIPTION "Network for SoPra")
 
 set(SOURCES
-        ${CMAKE_SOURCE_DIR}/SopraNetwork.cpp
         ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp
         ${CMAKE_SOURCE_DIR}/Server/Connection.cpp)
 
 set(LIBS websockets pthread)
 
+include_directories(${CMAKE_SOURCE_DIR})
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
