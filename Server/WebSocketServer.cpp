@@ -78,11 +78,9 @@ namespace network {
                 auto connection = std::make_shared<Connection>(Connection{websocket, this->callList});
                 connections.emplace(std::make_pair(*userData, connection));
                 this->connectionListener(connection);
-                std::cout << "Established (" << *userData << ")" << std::endl;
                 break;
             }
             case LWS_CALLBACK_CLOSED: {
-                std::cout << "Closed (" << *userData << ")" << std::endl;
                 auto it = connections.find(*userData);
                 if (it != connections.end()) {
                     it->second->receiveListener(text);
@@ -93,7 +91,6 @@ namespace network {
                 break;
             }
             case LWS_CALLBACK_RECEIVE: {
-                std::cout << "Recv (" << *userData << "): " << text << std::endl;
                 auto it = connections.find(*userData);
                 if (it != connections.end()) {
                     it->second->receiveListener(text);
@@ -108,9 +105,9 @@ namespace network {
     }
 
     WebSocketServer::~WebSocketServer() {
-        finished = true;
-        workerThread.join();
-        instances.erase(this->context.get());
+        this->finished = true;
+        this->workerThread.join();
+        WebSocketServer::instances.erase(this->context.get());
     }
 
     int WebSocketServer::globalHandler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data,
