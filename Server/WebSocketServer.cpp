@@ -11,12 +11,13 @@
 namespace network {
     std::map<lws_context*, WebSocketServer*> WebSocketServer::instances;
 
-    WebSocketServer::WebSocketServer(uint16_t port) :
+    WebSocketServer::WebSocketServer(uint16_t port, const std::string &protocolName) :
         finished{false},
+        protocolName{protocolName},
         context{nullptr, lws_context_destroy},
         protocols{
             {
-                "http-only",
+                this->protocolName.c_str(),
                 &WebSocketServer::globalHandler,
                 sizeof(int),
                 4096,

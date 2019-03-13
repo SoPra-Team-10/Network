@@ -7,6 +7,6 @@
 #endif
 
 TEST(WebSocketServer, ConstructDeconstruct) {
-    network::WebSocketServer server{8080};
-    network::WebSocketServer{8081};
+    network::WebSocketServer server{8080, "abc"};
+    network::WebSocketServer{8081, "http-only"};
 }

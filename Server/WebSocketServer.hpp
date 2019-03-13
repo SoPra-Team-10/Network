@@ -10,7 +10,6 @@
 
 #include <cstdint>
 #include <thread>
-#include <mutex>
 #include <atomic>
 #include <map>
 
@@ -23,7 +22,7 @@ namespace network {
     class WebSocketServer {
         friend class Connection;
     public:
-        explicit WebSocketServer(uint16_t port);
+        WebSocketServer(uint16_t port, const std::string &protocolName);
 
         const util::Listener<std::shared_ptr<Connection>> connectionListener;
 
@@ -35,6 +34,7 @@ namespace network {
         std::thread workerThread;
         std::atomic_bool finished;
 
+        std::string protocolName;
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
         const std::vector<lws_protocols> protocols;
 
