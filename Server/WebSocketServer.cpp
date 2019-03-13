@@ -52,12 +52,11 @@ namespace network {
         while (!finished) {
             lws_service(this->context.get(), 50);
 
-            this->callList->second.lock();
+            std::lock_guard<std::mutex> lock{this->callList->second};
             for (const auto &call : this->callList->first) {
                 call();
             }
             this->callList->first.clear();
-            this->callList->second.unlock();
         }
     }
 
@@ -65,16 +64,11 @@ namespace network {
         lws_write(wsi, reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
     }
 
-    WebSocketServer::~WebSocketServer() {
-        finished = true;
-        workerThread.join();
-    }
-
     int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, int *userData, std::string text) {
         switch (reasons) {
             case LWS_CALLBACK_ESTABLISHED: {
                 *userData = ++connectionUidCount;
-                auto connection = std::make_shared<Connection>(websocket, this->callList);
+                auto connection = std::make_shared<Connection>(Connection{websocket, this->callList});
                 connections.emplace(std::make_pair(*userData, connection));
                 this->connectionListener(connection);
                 std::cout << "Established (" << *userData << ")" << std::endl;
@@ -98,6 +92,12 @@ namespace network {
         }
 
         return 0;
+    }
+
+    WebSocketServer::~WebSocketServer() {
+        finished = true;
+        workerThread.join();
+        instances.erase(this->context.get());
     }
 
     int WebSocketServer::globalHandler(lws *websocket, lws_callback_reasons reasons, void *userData, void *data,

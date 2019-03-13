@@ -21,10 +21,11 @@ namespace network {
     class Connection {
         friend class WebSocketServer;
         public:
-            Connection(lws* socket, AsyncCallList asyncCallList);
+            Connection() = delete;
             const util::Listener<std::string> receiveListener;
             void send(std::string text);
         private:
+            Connection(lws* socket, AsyncCallList asyncCallList);
             lws* socket;
             AsyncCallList callList;
     };
