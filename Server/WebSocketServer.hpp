@@ -34,10 +34,23 @@ namespace network {
         WebSocketServer(uint16_t port, const std::string &protocolName);
 
         /**
-         * This listener is triggered everytime a new connection exists. The handlers are
+         * This listener is triggered every time a new connection exists. The handlers are
          * called in the server thread, not in the main thread!
          */
         const util::Listener<std::shared_ptr<Connection>> connectionListener;
+
+        /**
+         * This listener is triggered every time a connection is closed. The handlers are
+         * called in the server thread, not in the main thread!
+         */
+        const util::Listener<std::shared_ptr<Connection>> closeListener;
+
+        /**
+         * Send a message to all connected clients. The data is not send immediatly but when the server
+         * thread is not busy (should be usually less than 50ms)
+         * @param text the message to send
+         */
+        void broadcast(std::string text);
 
         /**
          * DTor

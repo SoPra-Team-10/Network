@@ -39,8 +39,15 @@ namespace network {
              * Send a string to the client. The data is not send immediatly but when the server thread
              * is not busy (should be usually less than 50ms)
              * @param text the text to send
+             * @throws std::runtime_error if the client disconnected
              */
             void send(std::string text);
+
+            /**
+             * Checks if the connection is still valid and a client is connected.
+             * @return true if the connection is valid
+             */
+            auto isValid() const -> bool;
         private:
             Connection(lws* socket, AsyncCallList asyncCallList);
             lws* socket;

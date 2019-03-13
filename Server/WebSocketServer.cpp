@@ -65,6 +65,12 @@ namespace network {
         lws_write(wsi, reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
     }
 
+    void WebSocketServer::broadcast(std::string text) {
+        for (const auto &connection : this->connections) {
+            connection.second->send(text);
+        }
+    }
+
     int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, int *userData, std::string text) {
         switch (reasons) {
             case LWS_CALLBACK_ESTABLISHED: {
@@ -77,7 +83,13 @@ namespace network {
             }
             case LWS_CALLBACK_CLOSED: {
                 std::cout << "Closed (" << *userData << ")" << std::endl;
-                connections.erase(*userData);
+                auto it = connections.find(*userData);
+                if (it != connections.end()) {
+                    it->second->receiveListener(text);
+                    this->closeListener(it->second);
+                    it->second->socket = nullptr;
+                    connections.erase(*userData);
+                }
                 break;
             }
             case LWS_CALLBACK_RECEIVE: {
