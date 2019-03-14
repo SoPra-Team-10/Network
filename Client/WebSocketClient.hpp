@@ -21,12 +21,37 @@
 namespace network {
     using AsyncCallList = std::pair<std::list<std::function<void()>>, std::mutex>;
 
+    /**
+     * Implements a client which can connect to a server
+     */
     class WebSocketClient {
     public:
+        /**
+         * CTor, construct a new client and connect.
+         * @param server the hostname of the server (example.com)
+         * @param path the path on the server (/xyz still needs a "/" if empty)
+         * @param port the port, usually 80 or 443
+         * @param protocolName the name of the protocol
+         */
         WebSocketClient(const std::string &server, const std::string &path,
                 uint16_t port, const std::string &protocolName);
+
+        /**
+         * Listener which gets called everytime a new package is received. This listener
+         * gets called in the server thread!
+         */
         const util::Listener<std::string> receiveListener;
+
+        /**
+         * Send a message to the server. The data is not send immediatly but when the server
+         * thread is not busy (should be usually less than 50ms)
+         * @param text the message to send
+         */
         void send(std::string text);
+
+        /**
+         * DTor
+         */
         ~WebSocketClient();
     private:
         void run();

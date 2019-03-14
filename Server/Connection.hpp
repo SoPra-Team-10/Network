@@ -16,7 +16,7 @@
 #include "Listener.hpp"
 
 namespace network {
-    using AsyncCallList = std::shared_ptr<std::pair<std::list<std::function<void()>>, std::mutex>>;
+    using AsyncCallListPtr = std::shared_ptr<std::pair<std::list<std::function<void()>>, std::mutex>>;
 
     /**
      * A connection represents one client of the server. This class cannot be instantiated,
@@ -49,9 +49,9 @@ namespace network {
              */
             auto isValid() const -> bool;
         private:
-            Connection(lws* socket, AsyncCallList asyncCallList);
+            Connection(lws* socket, AsyncCallListPtr asyncCallList);
             lws* socket;
-            AsyncCallList callList;
+            AsyncCallListPtr callList;
     };
 }
 

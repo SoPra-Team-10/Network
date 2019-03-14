@@ -67,7 +67,7 @@ namespace network {
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
         const std::vector<lws_protocols> protocols;
 
-        AsyncCallList callList;
+        AsyncCallListPtr callList;
         int connectionUidCount;
         std::map<int, std::shared_ptr<Connection>> connections;
 

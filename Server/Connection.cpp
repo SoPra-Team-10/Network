@@ -11,7 +11,7 @@
 #include "WebSocketServer.hpp"
 
 namespace network {
-    Connection::Connection(lws *socket, AsyncCallList asyncCallList)
+    Connection::Connection(lws *socket, AsyncCallListPtr asyncCallList)
             : socket{socket}, callList{std::move(asyncCallList)}{}
 
     void Connection::send(std::string text) {
