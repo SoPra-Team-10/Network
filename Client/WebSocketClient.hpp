@@ -31,10 +31,10 @@ namespace network {
     private:
         void run();
         int handler(lws *websocket, lws_callback_reasons reasons, std::string text);
-        void connect();
 
         std::thread workerThread;
         std::atomic_bool finished;
+        std::atomic_bool connected;
 
         std::string server, path;
         uint16_t port;

@@ -11,9 +11,16 @@
 // Or use the installed version:
 //#include <SopraNetwork/WebSocketServer.hpp>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wmissing-noreturn"
+
 void newConnectionHandler(std::shared_ptr<network::Connection> connection) {
     std::cout << "New Connection!" << std::endl;
     connection->send("Pong");
+    std::function<void(std::string)> receiveHandler = [](std::string text){
+        std::cout << "Received: " << text << std::endl;
+    };
+    connection->receiveListener(receiveHandler);
 }
 
 int main() {
@@ -25,4 +32,5 @@ int main() {
 
     }
 }
- 
+
+#pragma clang diagnostic pop

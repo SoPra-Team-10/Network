@@ -15,6 +15,7 @@ namespace network {
     WebSocketClient::WebSocketClient(const std::string &server, const std::string &path,
             uint16_t port, const std::string &protocolName) :
         finished{false},
+        connected{false},
         server{server}, path{path}, port{port},
         protocolName{protocolName},
         context{nullptr, lws_context_destroy},
@@ -47,10 +48,6 @@ namespace network {
         }
         instances.insert({this->context.get(), this});
 
-        this->workerThread = std::thread{&WebSocketClient::run, this};
-    }
-
-    void WebSocketClient::connect() {
         lws_client_connect_info clientConnectInfo{};
         clientConnectInfo.context = this->context.get();
         clientConnectInfo.port = this->port;
@@ -66,6 +63,8 @@ namespace network {
         if (!lws_client_connect_via_info(&clientConnectInfo)) {
             throw std::runtime_error("Could not connect!");
         }
+
+        this->workerThread = std::thread{&WebSocketClient::run, this};
     }
 
     void WebSocketClient::send(std::string text) {
@@ -83,11 +82,13 @@ namespace network {
         while (!finished) {
             lws_service(this->context.get(), 50);
 
-            std::lock_guard<std::mutex> lock{this->callList.second};
-            for (const auto &call : this->callList.first) {
-                call();
+            if (connected) {
+                std::lock_guard<std::mutex> lock{this->callList.second};
+                for (const auto &call : this->callList.first) {
+                    call();
+                }
+                this->callList.first.clear();
             }
-            this->callList.first.clear();
         }
     }
 
@@ -95,7 +96,9 @@ namespace network {
         switch (reasons) {
             case LWS_CALLBACK_PROTOCOL_INIT:
                 this->wsi = websocket;
-                this->connect();
+                break;
+            case LWS_CALLBACK_CLIENT_ESTABLISHED:
+                this->connected = true;
                 break;
             case LWS_CALLBACK_CLIENT_RECEIVE:
                 this->receiveListener(std::move(text));
