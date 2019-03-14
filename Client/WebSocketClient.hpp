@@ -43,6 +43,12 @@ namespace network {
         const util::Listener<std::string> receiveListener;
 
         /**
+         * Listener which gets called when the client disconnects. This listener
+         * gets called in the server thread!
+         */
+        const util::Listener<> closeListener;
+
+        /**
          * Send a message to the server. The data is not send immediatly but when the server
          * thread is not busy (should be usually less than 50ms)
          * @param text the message to send

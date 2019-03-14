@@ -68,6 +68,9 @@ namespace network {
     }
 
     void WebSocketClient::send(std::string text) {
+        if (this->finished) {
+            throw std::runtime_error("Connection already closed!");
+        }
         std::lock_guard<std::mutex> lockGuard{callList.second};
         callList.first.emplace_back([=](){WebSocketClient::sendImpl(text, this->wsi);});
     }
@@ -99,6 +102,10 @@ namespace network {
                 break;
             case LWS_CALLBACK_CLIENT_RECEIVE:
                 this->receiveListener(std::move(text));
+                break;
+            case LWS_CALLBACK_CLOSED:
+                this->finished = true;
+                closeListener();
                 break;
             default:
                 break;
