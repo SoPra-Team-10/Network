@@ -1,10 +1,3 @@
-/**
- * @file main.cpp
- * @author paul
- * @date 09.03.19
- * @brief main @TODO
- */
-
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
  

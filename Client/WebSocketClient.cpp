@@ -4,7 +4,7 @@
  * @file WebSocketClient.cpp
  * @author paul
  * @date 13.03.19
- * @brief WebSocketClient @TODO
+ * @brief Implements the WebSocketClient class
  */
 
 #include "WebSocketClient.hpp"

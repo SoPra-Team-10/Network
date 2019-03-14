@@ -2,7 +2,7 @@
  * @file serverTest.cpp
  * @author paul
  * @date 11.03.19
- * @brief Small websockets server
+ * @brief Small websockets server test/example
  */
 #include <iostream>
 

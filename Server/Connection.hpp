@@ -1,12 +1,12 @@
 /**
- * @file ConnectionInformation.hpp
+ * @file Connection.hpp
  * @author paul
  * @date 10.03.19
- * @brief ConnectionInformation @TODO
+ * @brief Declares the Connection class
  */
 
-#ifndef SOPRANETWORK_CONNECTIONINFORMATION_HPP
-#define SOPRANETWORK_CONNECTIONINFORMATION_HPP
+#ifndef SOPRANETWORK_CONNECTION_HPP
+#define SOPRANETWORK_CONNECTION_HPP
 
 #include <memory>
 #include <mutex>
@@ -55,4 +55,4 @@ namespace network {
     };
 }
 
-#endif //SOPRANETWORK_CONNECTIONINFORMATION_HPP
+#endif //SOPRANETWORK_CONNECTION_HPP

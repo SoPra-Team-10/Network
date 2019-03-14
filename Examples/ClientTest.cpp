@@ -2,7 +2,7 @@
  * @file ClientTest.cpp
  * @author paul
  * @date 13.03.19
- * @brief ClientTest @TODO
+ * @brief Small test/example program for the WebSocketClient
  */
 #include <iostream>
 #include <chrono>
@@ -32,6 +32,5 @@ int main() {
         std::this_thread::sleep_for(1s);
         client.send("Test");
     }
-    return 0;
 }
 #pragma clang diagnostic pop

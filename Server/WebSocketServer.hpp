@@ -2,7 +2,7 @@
  * @file WebSocketServer.hpp
  * @author paul
  * @date 10.03.19
- * @brief WebSocketServer @TODO
+ * @brief Declares the WebSocketServer class
  */
 
 #ifndef SOPRANETWORK_WEBSOCKETSERVER_HPP

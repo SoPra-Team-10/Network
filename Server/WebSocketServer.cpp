@@ -2,7 +2,7 @@
  * @file WebSocketServer.cpp
  * @author paul
  * @date 10.03.19
- * @brief WebSocketServer @TODO
+ * @brief Implements the WebSocketServer class
  */
 
 #include <iostream>

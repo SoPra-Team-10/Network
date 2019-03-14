@@ -2,7 +2,7 @@
  * @file WebSocketClient.hpp
  * @author paul
  * @date 13.03.19
- * @brief WebSocketClient @TODO
+ * @brief Declares the WebSocketClient class
  */
 
 #ifndef SOPRANETWORK_WEBSOCKETCLIENT_HPP

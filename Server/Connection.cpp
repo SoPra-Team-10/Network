@@ -1,12 +1,11 @@
-#include <utility>
-
 /**
- * @file ConnectionInformation.cpp
+ * @file Connection.cpp
  * @author paul
  * @date 10.03.19
- * @brief ConnectionInformation @TODO
+ * @brief Implements the Connection class
  */
 
+#include <utility>
 #include "Connection.hpp"
 #include "WebSocketServer.hpp"
 
