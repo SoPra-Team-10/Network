@@ -92,11 +92,8 @@ namespace network {
         }
     }
 
-    int WebSocketClient::handler(lws *websocket, lws_callback_reasons reasons, std::string text) {
+    int WebSocketClient::handler(lws_callback_reasons reasons, std::string text) {
         switch (reasons) {
-            case LWS_CALLBACK_PROTOCOL_INIT:
-                this->wsi = websocket;
-                break;
             case LWS_CALLBACK_CLIENT_ESTABLISHED:
                 this->connected = true;
                 break;
@@ -115,7 +112,7 @@ namespace network {
         auto *ctx = lws_get_context(websocket);
         auto instance = instances.find(ctx);
         if (instance != instances.end()) {
-            return instance->second->handler(websocket, reasons, text);
+            return instance->second->handler(reasons, text);
         }
         return 0;
     }

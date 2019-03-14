@@ -55,7 +55,7 @@ namespace network {
         ~WebSocketClient();
     private:
         void run();
-        int handler(lws *websocket, lws_callback_reasons reasons, std::string text);
+        int handler(lws_callback_reasons reasons, std::string text);
 
         std::thread workerThread;
         std::atomic_bool finished;
@@ -64,9 +64,13 @@ namespace network {
         std::string server, path;
         uint16_t port;
 
+        /*
+         * Even tho these variables might seem unused they are necessary to exist for the complete lifetime of
+         * the object (lws uses the data which it gets via a raw pointer).
+         */
         std::string protocolName;
         std::unique_ptr<lws_context, decltype(&lws_context_destroy)> context;
-        lws *wsi;
+        lws *wsi; // Yes i know this is a raw pointer, but wsi doesn't need destruction.
         const std::vector<lws_protocols> protocols;
 
         AsyncCallList callList;
