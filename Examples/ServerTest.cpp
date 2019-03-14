@@ -17,16 +17,15 @@
 void newConnectionHandler(std::shared_ptr<network::Connection> connection) {
     std::cout << "New Connection!" << std::endl;
     connection->send("Pong");
-    std::function<void(std::string)> receiveHandler = [](std::string text){
+
+    connection->receiveListener([](std::string text){
         std::cout << "Received: " << text << std::endl;
-    };
-    connection->receiveListener(receiveHandler);
+    });
 }
 
 int main() {
     network::WebSocketServer server{8080, "http-only"};
-    decltype(server.connectionListener)::type handler{newConnectionHandler};
-    server.connectionListener(handler);
+    server.connectionListener(newConnectionHandler);
     std::cout << "Started on port 8080" << std::endl;
     while (true) {
 

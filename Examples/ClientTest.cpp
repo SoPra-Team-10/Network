@@ -22,7 +22,7 @@ int main() {
 
     network::WebSocketClient client{"localhost", "/", 8080, "http-only"};
 
-    std::function<void(std::string)> handler = [](std::string s){
+    auto handler = [](std::string s){
         std::cout << s << std::endl;
     };
 

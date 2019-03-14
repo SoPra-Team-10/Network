@@ -12,26 +12,38 @@
 #include <functional>
 
 namespace util {
+    /**
+     * Implements a generic event listener with arbitrary messages.
+     * @tparam Args the type(s) of the message
+     */
     template<typename ...Args>
     class Listener {
     public:
-        Listener() = default;
+        /**
+         * Subscribe to the listener
+         * @param listener a functor which should get called
+         */
+        template<typename T>
+        void operator()(T &&listener) const;
 
-        void operator()(std::function<void(Args...)> &listener) const;
-
+        /**
+         * Call all listeners
+         * @param args the arguments with which to call.
+         */
         void operator()(Args... args) const;
 
+        /**
+         * Get the number of subscribed listeners
+         */
         auto getSubscribed() const -> std::size_t;
 
+        /**
+         * Type of the required functor.
+         */
         using type = std::function<void(Args...)>;
     private:
         mutable std::list<std::function<void(Args...)>> listeners;
     };
-
-    template<typename... Args>
-    void Listener<Args...>::operator()(std::function<void(Args...)> &listener) const {
-        this->listeners.push_back(listener);
-    }
 
     template<typename... Args>
     void Listener<Args...>::operator()(Args... args) const {
@@ -43,6 +55,12 @@ namespace util {
     template<typename... Args>
     auto Listener<Args...>::getSubscribed() const -> std::size_t {
         return this->listeners.size();
+    }
+
+    template<typename... Args>
+    template<typename T>
+    void Listener<Args...>::operator()(T &&listener) const {
+        this->listeners.emplace_back(std::forward<T>(listener));
     }
 }
 
