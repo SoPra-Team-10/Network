@@ -31,6 +31,11 @@ namespace network {
             Connection() = delete;
 
             /**
+             * CTor: not copyable
+             */
+            Connection(const Connection&) = delete;
+
+            /**
              * Listener which is called every time a new message is received.
              */
             const util::Listener<std::string> receiveListener;

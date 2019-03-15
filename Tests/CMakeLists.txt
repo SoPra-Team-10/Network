@@ -7,7 +7,7 @@ if (GTest_FOUND)
 
     set(TEST_SOURCES
             Server/WebSocketServer.cpp
-            Server/Connection.cpp)
+            Client/WebSocketClient.cpp)
 
     if (USE_INSTALLED_LIB)
         add_definitions(-DUSE_INSTALLED_LIB)

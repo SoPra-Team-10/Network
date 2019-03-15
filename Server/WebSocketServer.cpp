@@ -75,7 +75,9 @@ namespace network {
         switch (reasons) {
             case LWS_CALLBACK_ESTABLISHED: {
                 *userData = ++connectionUidCount;
-                auto connection = std::make_shared<Connection>(Connection{websocket, this->callList});
+                // Yes i create a raw pointer and pass it to the shared_ptr ctor instead of using
+                // make_shared, this is necessary because the Connector CTor is private.
+                auto connection = std::shared_ptr<Connection>{new Connection{websocket, this->callList}};
                 connections.emplace(std::make_pair(*userData, connection));
                 this->connectionListener(connection);
                 break;
