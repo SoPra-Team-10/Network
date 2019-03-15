@@ -1,9 +1,7 @@
 FROM ubuntu:18.04
 
 # Install dependencies
-RUN apt-get update -y && apt-get install -y software-properties-common
-RUN add-apt-repository -y ppa:ubuntu-toolchain-r/test && apt-get update -y
-RUN apt-get install -y libgtest-dev cmake valgrind gcc-8 g++-8 libasan5 google-mock git libssl-dev
+RUN apt-get update -y && apt-get install -y libgtest-dev cmake gcc-8 g++-8 libasan5 google-mock git libssl-dev
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 800 --slave /usr/bin/g++ g++ /usr/bin/g++-8
 
 # Compile GTest
