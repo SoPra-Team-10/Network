@@ -62,7 +62,15 @@ namespace network {
     }
 
     void WebSocketServer::sendImpl(std::string text, lws *wsi) {
-        lws_write(wsi, reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
+        if (wsi != nullptr) {
+            std::vector<unsigned char> buf;
+            buf.resize(text.length() + LWS_PRE + 1);
+            for (std::size_t c=0; c<text.size(); ++c) {
+                buf[c + LWS_PRE] = text.at(c);
+            }
+            buf.back() = '\0';
+            lws_write(wsi, buf.data() + LWS_PRE, text.length(), LWS_WRITE_TEXT);
+        }
     }
 
     void WebSocketServer::broadcast(std::string text) {

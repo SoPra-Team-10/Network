@@ -18,8 +18,9 @@ void newConnectionHandler(std::shared_ptr<network::Connection> connection) {
     std::cout << "New Connection!" << std::endl;
     connection->send("Pong");
 
-    connection->receiveListener([](std::string text){
+    connection->receiveListener([connection](std::string text){
         std::cout << "Received: " << text << std::endl;
+        connection->send("Echo");
     });
 }
 
