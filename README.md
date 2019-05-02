@@ -76,8 +76,9 @@ sudo make install
 the library can now be included using
 
 ```
-#include <SopraNetwork/XY>
+#include <SopraNetwork/Filename>
 ```
+with `Filename` beeing one of the header files without their relative path.
 
 and linked using
 
