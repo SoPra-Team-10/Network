@@ -24,7 +24,52 @@ a message by calling the same operator with the argument types
 as specified by `Args...`.
 
 ## Installing
-In the root directory of the project run
+### Libwebsockets
+First you need to install libssl, on ubuntu this can be done by running
+
+```
+sudo apt install libssl-dev
+```
+next clone libwebsockets from GitHub by running
+
+```
+git clone https://github.com/warmcat/libwebsockets.git
+```
+
+change into the cloned directory (`cd libwebsockets`) and create the Makefile by running:
+
+```
+cmake .
+```
+
+next compile the project by running the makefile
+
+```
+make
+```
+
+finally install the library by running
+
+```
+sudo make install
+```
+
+To be able to use the library without rebooting reload the linker cache by running
+
+```
+sudo ldconfig
+```
+
+### Installing SopraNetwork
+In the root directory of the  project run cmake to generate a Makefile by running
+```
+cmake .
+```
+next compile the program by running
+```
+make
+```
+finally install the program by running
 ```
 sudo make install
 ```
