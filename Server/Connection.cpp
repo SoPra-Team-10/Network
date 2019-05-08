@@ -18,7 +18,7 @@ namespace network {
             throw std::runtime_error("Client already disconnected");
         }
         std::lock_guard<std::mutex> lockGuard{callList->second};
-        callList->first.emplace_back([=](){WebSocketServer::sendImpl(text, this->socket);});
+        callList->first.emplace_back(std::bind(WebSocketServer::sendImpl, text, socket));
     }
 
     auto Connection::isValid() const -> bool {

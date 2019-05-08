@@ -20,10 +20,10 @@ namespace network {
                 this->protocolName.c_str(),
                 &WebSocketServer::globalHandler,
                 sizeof(int),
-                4096,
+                8192,
                 0,
                 nullptr,
-                0
+                8192
             },
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
@@ -64,11 +64,10 @@ namespace network {
     void WebSocketServer::sendImpl(std::string text, lws *wsi) {
         if (wsi != nullptr) {
             std::vector<unsigned char> buf;
-            buf.resize(text.length() + LWS_PRE + 1);
+            buf.resize(text.length() + LWS_PRE);
             for (std::size_t c=0; c<text.size(); ++c) {
                 buf[c + LWS_PRE] = text.at(c);
             }
-            buf.back() = '\0';
             lws_write(wsi, buf.data() + LWS_PRE, text.length(), LWS_WRITE_TEXT);
         }
     }
@@ -93,9 +92,8 @@ namespace network {
             case LWS_CALLBACK_CLOSED: {
                 auto it = connections.find(*userData);
                 if (it != connections.end()) {
-                    it->second->receiveListener(text);
-                    this->closeListener(it->second);
                     it->second->socket = nullptr;
+                    this->closeListener(it->second);
                     connections.erase(*userData);
                 }
                 break;
