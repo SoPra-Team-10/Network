@@ -20,10 +20,10 @@ namespace network {
                 this->protocolName.c_str(),
                 &WebSocketServer::globalHandler,
                 sizeof(int),
-                8192,
+                64000,
                 0,
                 nullptr,
-                8192
+                64000
             },
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
