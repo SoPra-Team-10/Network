@@ -85,3 +85,6 @@ and linked using
 ```
 -lSopraNetwork
 ```
+
+## SonarQube Analyse
+Das Analyseergebniss von SonarQube ist [hier auf SonarCloud](https://sonarcloud.io/dashboard?id=SoPra-Team-10_Network) zu finden.
