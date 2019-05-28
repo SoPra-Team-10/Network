@@ -1,22 +1,3 @@
-branches:
-  except:
-    - gh-pages
-
-env:
-  global:
-    - GH_REPO_NAME: Network
-    - DOXYFILE: $TRAVIS_BUILD_DIR/DOXYFILE
-    - GH_REPO_REF: github.com/SoPra-Team-10/Network.git
-
-addons:
-  apt:
-    packages:
-      - doxygen
-      - doxygen-doc
-      - doxygen-latex
-      - doxygen-gui
-      - graphviz
-
 services:
   - docker
 
