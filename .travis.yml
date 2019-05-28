@@ -1,8 +1,31 @@
+branches:
+  except:
+    - gh-pages
+
+env:
+  global:
+    - GH_REPO_NAME: Network
+    - DOXYFILE: $TRAVIS_BUILD_DIR/DOXYFILE
+    - GH_REPO_REF: github.com/SoPra-Team-10/Network.git
+
+addons:
+  apt:
+    packages:
+      - doxygen
+      - doxygen-doc
+      - doxygen-latex
+      - doxygen-gui
+      - graphviz
+
 services:
   - docker
 
 before_install:
-  - docker build -t network .
+  - docker build --no-cache -t network .
 
 script:
-  - docker run network
+  - docker run -e SONAR_TOKEN=${SONAR_TOKEN} -e TRAVIS_BRANCH=${TRAVIS_BRANCH} network bash -c ./run-sonarqube.sh
+  - docker run network build/Tests/Tests --gtest_repeat=10 --gtest_shuffle --gtest_color=yes
+
+notifications:
+  slack: soprateam10:${TRAVIS_TOKEN}
