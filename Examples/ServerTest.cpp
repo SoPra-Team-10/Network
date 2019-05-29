@@ -6,7 +6,7 @@
  */
 #include <iostream>
 
-#include "../Server/WebSocketServer.hpp"
+#include "../src/Server/WebSocketServer.hpp"
 
 // Or use the installed version:
 //#include <SopraNetwork/WebSocketServer.hpp>

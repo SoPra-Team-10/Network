@@ -16,13 +16,13 @@ endif ()
 project(SopraNetwork VERSION 0.0.1 DESCRIPTION "Network for SoPra")
 
 set(SOURCES
-        ${CMAKE_SOURCE_DIR}/Server/WebSocketServer.cpp
-        ${CMAKE_SOURCE_DIR}/Server/Connection.cpp
-        ${CMAKE_SOURCE_DIR}/Client/WebSocketClient.cpp)
+        ${CMAKE_SOURCE_DIR}/src/Server/WebSocketServer.cpp
+        ${CMAKE_SOURCE_DIR}/src/Server/Connection.cpp
+        ${CMAKE_SOURCE_DIR}/src/Client/WebSocketClient.cpp)
 
 set(LIBS websockets pthread)
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
@@ -32,7 +32,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         VERSION ${PROJECT_VERSION}
         SOVERSION 1
         PUBLIC_HEADER
-        "Server/WebSocketServer.hpp;Server/Connection.hpp;Listener.hpp;Client/WebSocketClient.hpp")
+        "src/Server/WebSocketServer.hpp;src/Server/Connection.hpp;src/Listener.hpp;src/Client/WebSocketClient.hpp")
 install(TARGETS ${PROJECT_NAME}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/SopraNetwork)
