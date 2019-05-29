@@ -15,7 +15,7 @@
 
 #include <libwebsockets.h>
 
-#include "src/Listener.hpp"
+#include "Listener.hpp"
 #include "Connection.hpp"
 
 namespace network {

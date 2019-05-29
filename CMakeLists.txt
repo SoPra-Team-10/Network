@@ -22,7 +22,7 @@ set(SOURCES
 
 set(LIBS websockets pthread)
 
-include_directories(${CMAKE_SOURCE_DIR})
+include_directories(${CMAKE_SOURCE_DIR}/src)
 add_library(${PROJECT_NAME} SHARED ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${LIBS})
 
