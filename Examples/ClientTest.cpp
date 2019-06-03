@@ -8,7 +8,7 @@
 #include <chrono>
 #include <thread>
 
-#include "../Client/WebSocketClient.hpp"
+#include "../src/Client/WebSocketClient.hpp"
 
 // Or use the installed version:
 //#include <SopraNetwork/WebSocketClient.hpp>

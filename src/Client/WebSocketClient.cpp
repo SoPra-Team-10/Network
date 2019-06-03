@@ -1,5 +1,3 @@
-#include <utility>
-
 /**
  * @file WebSocketClient.cpp
  * @author paul
@@ -8,6 +6,8 @@
  */
 
 #include "WebSocketClient.hpp"
+
+#include <utility>
 
 namespace network {
     std::map<lws_context*, WebSocketClient*> WebSocketClient::instances;
