@@ -13,12 +13,12 @@ namespace network {
     Connection::Connection(lws *socket, AsyncCallListPtr asyncCallList)
             : socket{socket}, callList{std::move(asyncCallList)}{}
 
-    void Connection::send(std::string text) {
+    void Connection::send(const std::string& text) {
         if (!this->socket) {
             throw std::runtime_error("Client already disconnected");
         }
         std::lock_guard<std::mutex> lockGuard{callList->second};
-        callList->first.emplace_back(std::bind(WebSocketServer::sendImpl, text, socket));
+        callList->first.emplace_back([=] { return WebSocketServer::sendImpl(text, socket); });
     }
 
     auto Connection::isValid() const -> bool {

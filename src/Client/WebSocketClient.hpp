@@ -34,8 +34,8 @@ namespace network {
          * @param port the port, usually 80 or 443
          * @param protocolName the name of the protocol
          */
-        WebSocketClient(const std::string &server, const std::string &path,
-                uint16_t port, const std::string &protocolName);
+        WebSocketClient(std::string server, std::string path,
+                uint16_t port, std::string protocolName);
 
         /**
          * Listener which gets called everytime a new package is received. This listener
@@ -54,7 +54,7 @@ namespace network {
          * thread is not busy (should be usually less than 50ms)
          * @param text the message to send
          */
-        void send(std::string text);
+        void send(const std::string& text);
 
         /**
          * DTor
@@ -62,7 +62,7 @@ namespace network {
         ~WebSocketClient();
     private:
         void run();
-        int handler(lws_callback_reasons reasons, std::string text);
+        int handler(lws_callback_reasons reasons, const std::string& text);
 
         std::thread workerThread;
         std::atomic_bool finished;

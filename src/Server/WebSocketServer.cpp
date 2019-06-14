@@ -13,9 +13,9 @@ static constexpr auto BUF_SIZE = 8000000;
 namespace network {
     std::map<lws_context*, WebSocketServer*> WebSocketServer::instances;
 
-    WebSocketServer::WebSocketServer(uint16_t port, const std::string &protocolName) :
+    WebSocketServer::WebSocketServer(uint16_t port, std::string protocolName) :
         finished{false},
-        protocolName{protocolName},
+        protocolName{std::move(protocolName)},
         context{nullptr, lws_context_destroy},
         protocols{
             {
@@ -74,13 +74,13 @@ namespace network {
         }
     }
 
-    void WebSocketServer::broadcast(std::string text) {
+    void WebSocketServer::broadcast(const std::string& text) {
         for (const auto &connection : this->connections) {
             connection.second->send(text);
         }
     }
 
-    int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, int *userData, std::string text) {
+    int WebSocketServer::handler(lws *websocket, lws_callback_reasons reasons, int *userData, const std::string& text) {
         switch (reasons) {
             case LWS_CALLBACK_ESTABLISHED: {
                 *userData = ++connectionUidCount;

@@ -31,7 +31,7 @@ namespace network {
          * @param port the port to use, often this is port 80 (HTTP)
          * @param protocolName the name of the protocol to use (needs to be the same as in the client code)
          */
-        WebSocketServer(uint16_t port, const std::string &protocolName);
+        WebSocketServer(uint16_t port, std::string protocolName);
 
         /**
          * This listener is triggered every time a new connection exists. The handlers are
@@ -50,7 +50,7 @@ namespace network {
          * thread is not busy (should be usually less than 50ms)
          * @param text the message to send
          */
-        void broadcast(std::string text);
+        void broadcast(const std::string& text);
 
         /**
          * DTor
@@ -58,7 +58,7 @@ namespace network {
         ~WebSocketServer();
     private:
         void run();
-        int handler(lws *websocket, lws_callback_reasons reasons, int *id, std::string text);
+        int handler(lws *websocket, lws_callback_reasons reasons, int *id, const std::string& text);
 
         std::thread workerThread;
         std::atomic_bool finished;

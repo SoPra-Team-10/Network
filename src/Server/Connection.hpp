@@ -47,7 +47,7 @@ namespace network {
              * @param text the text to send
              * @throws std::runtime_error if the client disconnected
              */
-            void send(std::string text);
+            void send(const std::string& text);
 
             /**
              * Checks if the connection is still valid and a client is connected.

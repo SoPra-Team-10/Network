@@ -9,25 +9,28 @@
 
 #include <utility>
 
+static constexpr auto BUF_SIZE = 8000000;
+
 namespace network {
     std::map<lws_context*, WebSocketClient*> WebSocketClient::instances;
 
-    WebSocketClient::WebSocketClient(const std::string &server, const std::string &path,
-            uint16_t port, const std::string &protocolName) :
+    WebSocketClient::WebSocketClient(std::string server, std::string path,
+            uint16_t port, std::string protocolName) :
         finished{false},
         connected{false},
-        server{server}, path{path}, port{port},
-        protocolName{protocolName},
+        server{std::move(server)}, path{std::move(path)}, port{port},
+        protocolName{std::move(protocolName)},
         context{nullptr, lws_context_destroy},
+        wsi{nullptr},
         protocols{
             {
                 this->protocolName.c_str(),
                 &WebSocketClient::globalHandler,
                 0,
-                64000,
+                BUF_SIZE,
                 0,
                 nullptr,
-                64000
+                BUF_SIZE
             },
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
@@ -67,7 +70,7 @@ namespace network {
         this->workerThread = std::thread{&WebSocketClient::run, this};
     }
 
-    void WebSocketClient::send(std::string text) {
+    void WebSocketClient::send(const std::string& text) {
         if (this->finished) {
             throw std::runtime_error("Connection already closed!");
         }
@@ -95,7 +98,7 @@ namespace network {
         }
     }
 
-    int WebSocketClient::handler(lws_callback_reasons reasons, std::string text) {
+    int WebSocketClient::handler(lws_callback_reasons reasons, const std::string& text) {
         switch (reasons) {
             case LWS_CALLBACK_CLIENT_ESTABLISHED:
                 this->connected = true;
