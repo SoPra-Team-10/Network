@@ -24,10 +24,10 @@ namespace network {
                 this->protocolName.c_str(),
                 &WebSocketClient::globalHandler,
                 0,
-                4096,
+                64000,
                 0,
                 nullptr,
-                0
+                64000
             },
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
@@ -46,7 +46,7 @@ namespace network {
         if (!this->context) {
             throw std::runtime_error("Could not initialize websocket");
         }
-        instances.insert({this->context.get(), this});
+        instances.emplace(this->context.get(), this);
 
         lws_client_connect_info clientConnectInfo{};
         clientConnectInfo.context = this->context.get();
@@ -133,8 +133,14 @@ namespace network {
     }
 
     void WebSocketClient::sendImpl(std::string text, lws *wsi) {
-        lws_write(wsi,
-                  reinterpret_cast<unsigned char*>(text.data()), text.length(), LWS_WRITE_TEXT);
+        if (wsi != nullptr) {
+            std::vector<unsigned char> buf;
+            buf.resize(text.length() + LWS_PRE);
+            for (std::size_t c=0; c<text.size(); ++c) {
+                buf[c + LWS_PRE] = text.at(c);
+            }
+            lws_write(wsi, buf.data() + LWS_PRE, text.length(), LWS_WRITE_TEXT);
+        }
     }
 
 }
