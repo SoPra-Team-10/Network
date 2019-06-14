@@ -10,6 +10,7 @@
 
 #include <string>
 #include <thread>
+#include <sstream>
 #include <atomic>
 #include <map>
 #include <mutex>
@@ -80,6 +81,8 @@ namespace network {
         const std::vector<lws_protocols> protocols;
 
         AsyncCallList callList;
+
+        std::stringstream receiveStream;
 
         static int globalHandler(lws *websocket, lws_callback_reasons reasons, void*, void *data,
                                  std::size_t len);

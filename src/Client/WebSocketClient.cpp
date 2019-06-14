@@ -100,8 +100,16 @@ namespace network {
             case LWS_CALLBACK_CLIENT_ESTABLISHED:
                 this->connected = true;
                 break;
-            case LWS_CALLBACK_CLIENT_RECEIVE:
-                this->receiveListener(std::move(text));
+            case LWS_CALLBACK_CLIENT_RECEIVE: {
+                    const std::size_t remaining = lws_remaining_packet_payload(this->wsi);
+                    const bool isFinalFragment = lws_is_final_fragment(this->wsi);
+
+                    this->receiveStream << text;
+                    if (!remaining && isFinalFragment) {
+                        this->receiveListener(receiveStream.str());
+                        receiveStream.str(std::string{});
+                    }
+                }
                 break;
             case LWS_CALLBACK_CLOSED:
                 this->finished = true;
