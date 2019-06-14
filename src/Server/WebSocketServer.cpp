@@ -103,7 +103,10 @@ namespace network {
             case LWS_CALLBACK_RECEIVE: {
                 auto it = connections.find(*userData);
                 if (it != connections.end()) {
-                    it->second->receiveListener(text);
+                    const std::size_t remaining = lws_remaining_packet_payload(websocket);
+                    const bool isFinalFragment = lws_is_final_fragment(websocket);
+
+                    it->second->receiveAndDefragment(text, !remaining && isFinalFragment);
                 }
                 break;
             }

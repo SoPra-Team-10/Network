@@ -24,4 +24,12 @@ namespace network {
     auto Connection::isValid() const -> bool {
         return !this->socket;
     }
+
+    void Connection::receiveAndDefragment(const std::string &message, bool isLastMessage) {
+        this->receiveStream << message;
+        if (isLastMessage) {
+            this->receiveListener(this->receiveStream.str());
+            this->receiveStream.str(std::string{});
+        }
+    }
 }
