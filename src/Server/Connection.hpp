@@ -12,6 +12,7 @@
 #include <mutex>
 
 #include <libwebsockets.h>
+#include <sstream>
 
 #include "Listener.hpp"
 
@@ -55,8 +56,11 @@ namespace network {
             auto isValid() const -> bool;
         private:
             Connection(lws* socket, AsyncCallListPtr asyncCallList);
+
+            void receiveAndDefragment(const std::string &message, bool isLastMessage);
             lws* socket;
             AsyncCallListPtr callList;
+            std::stringstream receiveStream;
     };
 }
 

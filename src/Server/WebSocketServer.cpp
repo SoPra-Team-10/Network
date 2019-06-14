@@ -8,6 +8,8 @@
 #include <iostream>
 #include "WebSocketServer.hpp"
 
+static constexpr auto BUF_SIZE = 8000000;
+
 namespace network {
     std::map<lws_context*, WebSocketServer*> WebSocketServer::instances;
 
@@ -20,10 +22,10 @@ namespace network {
                 this->protocolName.c_str(),
                 &WebSocketServer::globalHandler,
                 sizeof(int),
-                64000,
+                BUF_SIZE,
                 0,
                 nullptr,
-                64000
+                BUF_SIZE 
             },
             {
                 nullptr, nullptr, 0, 0, 0, nullptr, 0 // Quasi null terminator
@@ -101,7 +103,10 @@ namespace network {
             case LWS_CALLBACK_RECEIVE: {
                 auto it = connections.find(*userData);
                 if (it != connections.end()) {
-                    it->second->receiveListener(text);
+                    const std::size_t remaining = lws_remaining_packet_payload(websocket);
+                    const bool isFinalFragment = lws_is_final_fragment(websocket);
+
+                    it->second->receiveAndDefragment(text, !remaining && isFinalFragment);
                 }
                 break;
             }
