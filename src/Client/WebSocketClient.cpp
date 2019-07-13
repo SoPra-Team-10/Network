@@ -114,7 +114,7 @@ namespace network {
                     }
                 }
                 break;
-            case LWS_CALLBACK_CLOSED:
+            case LWS_CALLBACK_CLIENT_CLOSED:
                 this->finished = true;
                 closeListener();
                 break;
